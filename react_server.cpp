@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <iostream>
-#include "Reactor.hpp"
+#include "st_reactor.hpp"
 #include <unistd.h>  // for close()
 #include <set>
 
@@ -21,7 +21,7 @@ int main() {
     listen(listener, 10);
 
     // create a reactor
-    Reactor reactor;
+    st_reactor reactor;
     cout << "Listening on port: [9034] ..." << endl;
 
     // Define a container to hold all clients.

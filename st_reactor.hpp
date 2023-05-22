@@ -14,15 +14,15 @@
 using namespace std;
 typedef function<void(int)> handler_t;
 
-class Reactor {
+class st_reactor {
 private:
     map<int, handler_t> handlers;
     thread *reactor_thread;
     bool active;
 public:
-    Reactor();
+    st_reactor();
 
-    ~Reactor();
+    ~st_reactor();
 
     void stopReactor();
 

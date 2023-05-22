@@ -2,16 +2,16 @@
 // Created by Lara Abu Hamad on 21/05/2023.
 //
 
-#include "Reactor.hpp"
+#include "st_reactor.hpp"
 
 
-Reactor::Reactor() : reactor_thread(nullptr), active(false) {}
+st_reactor::st_reactor() : reactor_thread(nullptr), active(false) {}
 
-Reactor::~Reactor() {
+st_reactor::~st_reactor() {
     stopReactor();
 }
 
-void Reactor::stopReactor() {
+void st_reactor::stopReactor() {
     active = false;
     if (reactor_thread && reactor_thread->joinable()) {
         reactor_thread->join();
@@ -20,7 +20,7 @@ void Reactor::stopReactor() {
     }
 }
 
-void Reactor::startReactor() {
+void st_reactor::startReactor() {
     active = true;
     reactor_thread = new thread([this]() {
         while (active) {
@@ -39,11 +39,11 @@ void Reactor::startReactor() {
     });
 }
 
-void Reactor::addFd(int fd, handler_t handler) {
+void st_reactor::addFd(int fd, handler_t handler) {
     handlers[fd] = handler;
 }
 
-void Reactor::waitFor() {
+void st_reactor::waitFor() {
     if (reactor_thread && reactor_thread->joinable()) {
         reactor_thread->join();
     }
