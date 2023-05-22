@@ -8,21 +8,28 @@
 #include <map>
 #include <thread>
 #include <functional>
+#include <poll.h>
+#include <vector>
 
-typedef std::function<void(int)> handler_t;
+using namespace std;
+typedef function<void(int)> handler_t;
 
 class Reactor {
 private:
-    std::map<int, handler_t> handlers;
-    std::thread* reactor_thread;
+    map<int, handler_t> handlers;
+    thread *reactor_thread;
     bool active;
 public:
     Reactor();
+
     ~Reactor();
 
     void stopReactor();
+
     void startReactor();
+
     void addFd(int fd, handler_t handler);
+
     void waitFor();
 };
 

@@ -2,9 +2,8 @@
 // Created by Lara Abu Hamad on 21/05/2023.
 //
 
-#include "st_reactor.hpp"
-#include <poll.h>
-#include <vector>
+#include "Reactor.hpp"
+
 
 Reactor::Reactor() : reactor_thread(nullptr), active(false) {}
 
@@ -23,14 +22,14 @@ void Reactor::stopReactor() {
 
 void Reactor::startReactor() {
     active = true;
-    reactor_thread = new std::thread([this]() {
+    reactor_thread = new thread([this]() {
         while (active) {
-            std::vector<pollfd> fds;
-            for (const auto &handler : handlers) {
+            vector<pollfd> fds;
+            for (const auto &handler: handlers) {
                 fds.push_back({handler.first, POLLIN, 0});
             }
             if (poll(fds.data(), fds.size(), 1000) > 0) { // timeout is 1000ms
-                for (auto &fd : fds) {
+                for (auto &fd: fds) {
                     if (fd.revents & POLLIN) {
                         handlers[fd.fd](fd.fd);
                     }
