@@ -7,6 +7,8 @@ handle multiple client connections, with each **client** being handled by a sepa
 
 The **server** supports an **unlimited number of clients** by dynamically storing file descriptors and handlers.
 
+---
+
 ## About the Code
 
 This project consists of two main components: the `Reactor` and the `main server application`.
@@ -22,6 +24,8 @@ This project consists of two main components: the `Reactor` and the `main server
    accepted, it is added to the Reactor with a handler function.
    This handler function is responsible for receiving data from the client and broadcasting it to all other clients.
 
+---
+
 ## How to Compile
 
 You can compile the code using the provided makefile. Use the `make all` command to compile the `server application` and
@@ -30,6 +34,8 @@ the `Reactor library`, and `make clean` command to remove the compiled files.
 ```shell
 make all
 ```
+
+---
 
 ## How to Run
 
@@ -45,6 +51,8 @@ you are running the client on the same machine as the server, you can use `local
 ```shell
 telnet localhost 9034
 ```
+
+---
 
 ## Example
 
@@ -88,6 +96,11 @@ telnet localhost 9034
     ```
 
    All other clients will also receive this message.
+
+---
+
+## ScreenShot
+![ReactorChatServer.png](ReactorChatServer.png)
 
 ---
 
