@@ -1,37 +1,93 @@
-# Reactor-Chat-Server
+# Reactor Chat Server
 
-You need to implement a **chat that supports an unlimited number of clients using the reactor design pattern**, using the reactor structure as well as either `poll` or `select` based on your choice.
+This application implements a **multithreading chat server** using the **reactor design pattern**.
 
-The explanation for this API, as well as code examples, can be found in the **beej guide** in chapter 7, which is highly recommended to read thoroughly and build an action plan before starting implementation.
+The **server** uses threads to
+handle multiple client connections, with each **client** being handled by a separate thread.
 
-The **reactor library** should be named `st_reactor.so`.
+The **server** supports an **unlimited number of clients** by dynamically storing file descriptors and handlers.
 
-The **reactor should only support reading** (no writing or exceptions). According to the reactor design pattern, you should do the following:
+## About the Code
 
-- a. Implement a data structure that maps between the file descriptor (FD) and the function.
-- b. Implement the selector mechanism responsible for listening to all FDs and executing the corresponding action specified in the reactor table. This can be done using `poll` or `select`.
-- c. Since the selector listens to multiple FDs, and it's possible that more than one FD will be "ready" at a certain stage, the order of handling doesn't matter.
+This project consists of two main components: the `Reactor` and the `main server application`.
 
-You can define a **struct** that holds the private members of the reactor in the desired way.
+1. **Reactor:** The Reactor class is a mechanism that receives a file descriptor (fd) from a client and a function to
+   perform when the fd is active (has data to read).
 
+   The Reactor supports a large number of fds, running in a single thread, and uses the poll mechanism to handle events
+   on file descriptors.
 
-**The API** of the library should be as follows:
+2. **Server Application:** This is where the Reactor is used.
+   The server application creates a socket to listen for incoming client connections. Each time a connection is
+   accepted, it is added to the Reactor with a handler function.
+   This handler function is responsible for receiving data from the client and broadcasting it to all other clients.
 
-- a. `void* createReactor()` - Creates the reactor and returns a pointer to the reactor structure that will be passed to the next functions. When the reactor is created, it should not work, but all data structures should be initialized and allocated.
-- b. `void stopReactor(void* this)` - Stops the reactor if it's active. Otherwise, it does nothing.
-- c. `void startReactor(void* this)` - Starts a thread for the reactor. The thread will run in a busy loop and actually call `select` or `poll`.
-- d. `void addFd(void* this, int fd, handler_t handler)` - Adds an FD to the reactor. `handler_t` is a pointer to the function that will be called when the FD is ready. You can use `typedef` for `handler_t` as you prefer.
-- e. `void waitFor(void* this)` - Waits using `pthread_join` until the reactor thread finishes.
+## How to Compile
 
-**Wrapper of the library - The application:**
-The server should work exactly like the beej chat server (e.g., `selectserver`). The client that interacts with it should work in the same way as well. For any questions, such as which port to run on, etc., you should follow the same approach as in the Beej's guide.
+You can compile the code using the provided makefile. Use the `make all` command to compile the `server application` and
+the `Reactor library`, and `make clean` command to remove the compiled files.
 
-When the reactor thread is running, the main thread can wait for it.
-
-The execution format of the server is:
-
-```bash
-$ ./react_server
+```shell
+make all
 ```
 
-It doesn't require any arguments, just like in beej.
+## How to Run
+
+To run the `server`, use the command `./react_server`.
+
+```shell
+./react_server
+```
+
+To connect as a `client`, use `telnet <hostname> 9034` from another terminal window. The default port is 9034, and if
+you are running the client on the same machine as the server, you can use `localhost` as the hostname.
+
+```shell
+telnet localhost 9034
+```
+
+## Example
+
+1. Start the server:
+
+    ```shell
+    ./react_server
+    ```
+
+   Output:
+
+    ```shell
+    Listening on port: [9034] ...
+    ```
+
+2. Connect with a client:
+
+    ```shell
+    telnet localhost 9034
+    ```
+
+   Output:
+
+    ```shell
+    Trying ::1...
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'.
+    ```
+
+3. Send a message from the client:
+
+    ```shell
+    Hello, world!
+    ```
+
+4. The server will print the received message:
+
+    ```shell
+    [Client <ClientID>] message: Hello, world!
+    ```
+
+   All other clients will also receive this message.
+
+---
+
